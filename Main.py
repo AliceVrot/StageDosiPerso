@@ -5,42 +5,57 @@ import os
 import math
 from TAC import TAC
 from conversionXLSXCSV import conversionXLSXCSV
+from CalculDoseSelf import CalculDoseSelf
+from Sorties import comparaison_DoseAbsSelf_Biomaps_Gupta
+#from plot import plot
 
-chemin_xlsx = '/home/verot/Projet/DonneesGupta/Donnes_Gupta_Arrange.xlsx'
-chemin_csv = '/home/verot/Projet/DonneesGupta/Donnes_Gupta_Arrange.csv'
-chemin_xlsx1 = '/home/verot/Projet/DonneesGupta/S_values_XieZaidi.xlsx'
-chemin_csv1 = '/home/verot/Projet/DonneesGupta/S_values_XieZaidi.csv'
-chemin_xlsx2 = '/home/verot/Projet/DonneesGupta/D_abs.xlsx'
-chemin_csv2 = '/home/verot/Projet/DonneesGupta/D_abs.csv'
 
-chemin = '/home/verot/Projet/DonneesGupta/Donnes_Gupta_Arrange'
-chemin1 = '/home/verot/Projet/DonneesGupta/S_values_XieZaidi'
-chemin2 = '/home/verot/Projet/DonneesGupta/D_abs'
-# Ne convertir en .csv que si le fichier n'existe pas déjà
-#if not os.path.exists(chemin_csv):
-#    xlsx = pd.read_excel(chemin_xlsx)
-#    xlsx.to_csv(chemin_csv)
-#    print("hihihihihi")
-#if not os.path.exists(chemin_csv1):
-#    xlsx = pd.read_excel(chemin_xlsx1)
-#    xlsx.to_csv(chemin_csv1)
-#    print("hihihihihi")
-#if not os.path.exists(chemin_csv2):
-#    xlsx = pd.read_excel(chemin_xlsx2)
-#    xlsx.to_csv(chemin_csv2)
-#    print("hihihihihi")
+#chemin = '/home/verot/Projet/DonneesGupta/Donnes_Gupta_Arrange'
+#chemin1 = '/home/verot/Projet/DonneesGupta/S_values_XieZaidi'
+#chemin2 = '/home/verot/Projet/DonneesGupta/D_abs'
 
 
 
-#df = pd.read_csv(chemin_csv, header=3)
-#S_value=pd.read_csv(chemin_csv1, header=0)
-#D_abs=pd.read_csv(chemin_csv2, header=1).iloc[:, 1:]
+DonneesGupta = pd.read_csv('/home/verot/Projet/DonneesGupta/Donnes_Gupta_Arrange1.csv', index_col=0) # conversionXLSXCSV(chemin_xlsx, 3)
+S_value_XieZaidi_annexe = pd.read_csv('/home/verot/Projet/DonneesGupta/S_values_XieZaidi1.csv', index_col=0) #conversionXLSXCSV(chemin_xlsx1, 0)
+DoseAbsorbee_SelfCross_Gupta = pd.read_csv('/home/verot/Projet/DonneesGupta/D_abs1.csv', index_col=0)#conversionXLSXCSV(chemin_xlsx2, 1)
+DoseAbsorbee_GuptaETXieZaidi=pd.read_csv('/home/verot/Projet/DonneesGupta/Figure71.csv', index_col=0)
+Ainit= 15.22
+Tphys=109.771
+ordre = ['Coeur', 'Bladder', 'Spleen', 'Foie', 'Lungs', 'Cerveau', 'Estomac', 'Rein']
 
-df = conversionXLSXCSV(chemin_xlsx)
-S_value = conversionXLSXCSV(chemin_xlsx1)
-D_abs = conversionXLSXCSV(chemin_xlsx2)
 
-x = df['Délais'].to_numpy()
+organes = DonneesGupta.columns[6:16]
 
-ActInt_corr, ActExt_corr=(df, x)
-print(ActInt_corr, ActExt_corr)
+S_valueFigure5XieZaidi = pd.DataFrame({
+    'valeur': [
+        1.27E-01,  # Coeur
+        4.56E-01,  # Bladder
+        2.51E-01,  # Spleen
+        1.84E-02,  # Foie
+        1.72E-01,  # Lungs
+        6.54E-02,  # Cerveau
+        7.99E-02,  # Estomac
+        9.45E-02   # Rein
+    ]
+}, 
+index=ordre)
+#print(S_valueFigure5XieZaidi)
+S_valueFigure5XieZaidi.index.name = 'organe'
+
+
+x = DonneesGupta['Délais'].to_numpy()
+
+ActInt_corr, ActExt_corr=TAC(DonneesGupta, x, Ainit, Tphys)
+#print("ActInt: ", ActInt_corr*60, "ActExt: ", ActExt_corr*60)
+ActExt_corr=ActExt_corr*60
+ActInt_corr=ActInt_corr*60
+
+#print(organes)
+DSelfAbsDose, DSelfAbsDose1, SelfS_Value = CalculDoseSelf(ActInt_corr, ActExt_corr, organes , S_value_XieZaidi_annexe, S_valueFigure5XieZaidi)
+DSelfAbsDose=DSelfAbsDose/Ainit
+DSelfAbsDose1=DSelfAbsDose1/Ainit
+print("DSelfAbsDose: ", DSelfAbsDose, "DSelfAbsDose1: ", DSelfAbsDose1)
+
+Comparaison = comparaison_DoseAbsSelf_Biomaps_Gupta(organes, ActInt_corr, ActExt_corr, S_valueFigure5XieZaidi, Ainit, DSelfAbsDose1, DSelfAbsDose, SelfS_Value, DoseAbsorbee_SelfCross_Gupta, DoseAbsorbee_GuptaETXieZaidi)
+print(Comparaison)
