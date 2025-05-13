@@ -1,12 +1,13 @@
-import numpy as np
+#import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import os
-import math
+#import matplotlib.pyplot as plt
+#import os
+#import math
 from TAC import TAC
 from conversionXLSXCSV import conversionXLSXCSV
 from CalculDoseSelf import CalculDoseSelf
 from Sorties import comparaison_DoseAbsSelf_Biomaps_Gupta
+from plot import plotActivite, barplotComparaison
 #from plot import plot
 
 
@@ -44,18 +45,23 @@ index=ordre)
 S_valueFigure5XieZaidi.index.name = 'organe'
 
 
-x = DonneesGupta['Délais'].to_numpy()
+temps = DonneesGupta['Délais'].to_numpy()
 
-ActInt_corr, ActExt_corr=TAC(DonneesGupta, x, Ainit, Tphys)
+ActInt_corr, ActExt_corr, PartieExtrapolee, y_corr_matrice=TAC(DonneesGupta, temps, Ainit, Tphys)
 #print("ActInt: ", ActInt_corr*60, "ActExt: ", ActExt_corr*60)
 ActExt_corr=ActExt_corr*60
 ActInt_corr=ActInt_corr*60
 
 #print(organes)
-DSelfAbsDose, DSelfAbsDose1, SelfS_Value = CalculDoseSelf(ActInt_corr, ActExt_corr, organes , S_value_XieZaidi_annexe, S_valueFigure5XieZaidi)
-DSelfAbsDose=DSelfAbsDose/Ainit
-DSelfAbsDose1=DSelfAbsDose1/Ainit
-print("DSelfAbsDose: ", DSelfAbsDose, "DSelfAbsDose1: ", DSelfAbsDose1)
+DSelfAbsDose_annexe, DSelfAbsDose_figure5, SelfS_Value_XieZaidi_annexe = CalculDoseSelf(ActInt_corr, ActExt_corr, organes , S_value_XieZaidi_annexe, S_valueFigure5XieZaidi)
+DSelfAbsDose_annexe=DSelfAbsDose_annexe/Ainit
+DSelfAbsDose_figure5=DSelfAbsDose_figure5/Ainit
+#print("DSelfAbsDose: ", DSelfAbsDose, "DSelfAbsDose_figure5: ", DSelfAbsDose_figure5)
 
-Comparaison = comparaison_DoseAbsSelf_Biomaps_Gupta(organes, ActInt_corr, ActExt_corr, S_valueFigure5XieZaidi, Ainit, DSelfAbsDose1, DSelfAbsDose, SelfS_Value, DoseAbsorbee_SelfCross_Gupta, DoseAbsorbee_GuptaETXieZaidi)
-print(Comparaison)
+Comparaison = comparaison_DoseAbsSelf_Biomaps_Gupta(organes, ActInt_corr, ActExt_corr, S_valueFigure5XieZaidi, Ainit, DSelfAbsDose_figure5, DSelfAbsDose_annexe, SelfS_Value_XieZaidi_annexe, DoseAbsorbee_SelfCross_Gupta, DoseAbsorbee_GuptaETXieZaidi)
+#print(Comparaison)
+
+#print(ActInt_corr)
+
+plotActivite(temps, y_corr_matrice, PartieExtrapolee, organes)
+#barplotComparaison(DSelfAbsDose_annexe, DSelfAbsDose_figure5, 'titre', organes)
