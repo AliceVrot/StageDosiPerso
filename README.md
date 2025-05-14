@@ -28,6 +28,6 @@ Il peut aussi être utile de changer Ainit (l'activité injectée) en fonction d
 
 1. Cloner ce repository
 2. Installer les packages avec conda install --file requirements.txt
-3. 
+3. Changer les chemins vers les données d'entré
 
 
