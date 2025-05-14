@@ -1,3 +1,7 @@
+---
+title: "Dosimetrie personnalisée"
+output: html_document
+---
 Dosimetrie personnalisée
 
 Le fichier principale est main.py
