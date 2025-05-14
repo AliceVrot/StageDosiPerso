@@ -1,12 +1,12 @@
 # Dosimétrie personnalisée
 L’objectif de ce projet est d’évaluer la distribution de dose absorbée dans les organes à risque chez la souris après administration d’un ⁸⁹Zr-anti-PD-L1, en combinant des données d’imagerie TEP/SPECT et CT, et de comparer plusieurs méthodes de dosimétrie: dosimétrie à l'échelle de l'organe ou du voxel.
 Une pipeline de dosimetrie pour ces deux modalitésas été/ sera développée.
-Utilisation de simulation MonteCarlo à l'aide de GATE10
+Utilisation de simulation Monte Carlo à l'aide de GATE10
 
 - #### Dosimétrie à l'echelle de l'organe
   - Utilisation du formalisme MIRD
   - Fantôme MOBY
-  - Simulation Mmonte Carlo pour chaque organe source. Détermination de distribution d'energie déposée, distribution de la dose, nombre de coup et incertitude locale
+  - Simulation Monte Carlo pour chaque organe source. Détermination de distribution d'energie déposée, distribution de la dose, nombre de coup et incertitude locale
     
 - #### Dosimétrie à l'echelle du voxel
   - Fantôme voxélisé basé sur l'imagerie du patient/ de la sourie
@@ -27,9 +27,12 @@ Utilisation de simulation MonteCarlo à l'aide de GATE10
 ## Utiliser le code
 
 1. Créer un environnement virtuel conda
-2. Cloner ce repository
-3. Installer les packages avec conda install --file requirements.txt
-4. Changer les chemins vers les données d'entré
-5. Modifier Ainit (l'activité injectée en MBq) et Tphys (période physique de l'isotope utilisé en minutes) en fonction du projet
+2. Installer opengate (pas necessaire pour ce qu'il y a dans le repository à date mais sera important plus tard)
+3. Cloner ce repository
+4. Installer les packages avec conda install --file requirements.txt
+5. Changer les chemins vers les données d'entré
+6. Modifier Ainit (l'activité injectée en MBq) et Tphys (période physique de l'isotope utilisé en minutes) en fonction du projet
 
 
+## Installation opengate
+https://opengate-python.readthedocs.io/en/master/user_guide/user_guide_installation.html
