@@ -1,8 +1,4 @@
----
-title: "Dosimetrie personnalisée"
-output: html_document
----
-Dosimetrie personnalisée
+#Dosimetrie personnalisée
 
 Le fichier principale est main.py
 Dans les premières lignes dans fichier main.py corresponent à l'importation de la bibliothèque pandas (il faut l'installer au préalable) puis les autres fonctions qui constituent ce projet. Il faut donc les enregistrer dans le dossier de travail au préalable.
