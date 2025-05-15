@@ -36,3 +36,14 @@ Utilisation de simulation Monte Carlo à l'aide de GATE10
 
 ## Installation opengate
 https://opengate-python.readthedocs.io/en/master/user_guide/user_guide_installation.html
+
+
+
+verot@BIOST017:~/Projet/Scripts$ python Main.py \
+  --data /home/verot/Projet/DonneesGupta/Donnes_Gupta_Arrange1.csv \
+  --sval_annexe /home/verot/Projet/DonneesGupta/S_values_XieZaidi1.csv \
+  --sval_fig5 /home/verot/Projet/DonneesGupta/S_valueFigure5XieZaidi.csv \
+  --dose_cross /home/verot/Projet/DonneesGupta/D_abs1.csv \
+  --dose_gupta /home/verot/Projet/DonneesGupta/Figure71.csv \
+  --ainit 15.22 \
+  --tphys 109.771
