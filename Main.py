@@ -9,40 +9,50 @@ from CalculDoseSelf import CalculDoseSelf
 from Sorties import comparaison_DoseAbsSelf_Biomaps_Gupta
 from plot import plotActivite, barplotComparaison
 #from plot import plot
+import argparse
 
 
-#chemin = '/home/verot/Projet/DonneesGupta/Donnes_Gupta_Arrange'
-#chemin1 = '/home/verot/Projet/DonneesGupta/S_values_XieZaidi'
-#chemin2 = '/home/verot/Projet/DonneesGupta/D_abs'
+#DonneesGupta = pd.read_csv('/home/verot/Projet/DonneesGupta/Donnes_Gupta_Arrange1.csv', index_col=0) # conversionXLSXCSV(chemin_xlsx, 3)
+#S_value_XieZaidi_annexe = pd.read_csv('/home/verot/Projet/DonneesGupta/S_values_XieZaidi1.csv', index_col=0) #conversionXLSXCSV(chemin_xlsx1, 0)
+#DoseAbsorbee_SelfCross_Gupta = pd.read_csv('/home/verot/Projet/DonneesGupta/D_abs1.csv', index_col=0)#conversionXLSXCSV(chemin_xlsx2, 1)
+#DoseAbsorbee_GuptaETXieZaidi=pd.read_csv('/home/verot/Projet/DonneesGupta/Figure71.csv', index_col=0)
+#S_valueFigure5XieZaidi=pd.read_csv('/home/verot/Projet/DonneesGupta/S_valueFigure5XieZaidi.csv', index_col=0)
+#Ainit= 15.22
+#Tphys=109.771
+#ordre = ['Coeur', 'Bladder', 'Spleen', 'Foie', 'Lungs', 'Cerveau', 'Estomac', 'Rein']
 
 
+# === ARGUMENTS DE LIGNE DE COMMANDE ===
+parser = argparse.ArgumentParser(description="Pipeline dosimétrie personnalisée")
 
-DonneesGupta = pd.read_csv('/home/verot/Projet/DonneesGupta/Donnes_Gupta_Arrange1.csv', index_col=0) # conversionXLSXCSV(chemin_xlsx, 3)
-S_value_XieZaidi_annexe = pd.read_csv('/home/verot/Projet/DonneesGupta/S_values_XieZaidi1.csv', index_col=0) #conversionXLSXCSV(chemin_xlsx1, 0)
-DoseAbsorbee_SelfCross_Gupta = pd.read_csv('/home/verot/Projet/DonneesGupta/D_abs1.csv', index_col=0)#conversionXLSXCSV(chemin_xlsx2, 1)
-DoseAbsorbee_GuptaETXieZaidi=pd.read_csv('/home/verot/Projet/DonneesGupta/Figure71.csv', index_col=0)
-Ainit= 15.22
-Tphys=109.771
-ordre = ['Coeur', 'Bladder', 'Spleen', 'Foie', 'Lungs', 'Cerveau', 'Estomac', 'Rein']
+parser.add_argument("--data", required=True, help="Chemin vers le fichier .csv des données principales (DonneesGupta)")
+parser.add_argument("--sval_annexe", required=True, help="Chemin vers le fichier des S-values (annexe)")
+parser.add_argument("--sval_fig5", required=True, help="Chemin vers les S-values de la figure 5")
+parser.add_argument("--dose_cross", required=True, help="Chemin vers le fichier des doses absorbées (self+cross, Gupta)")
+parser.add_argument("--dose_gupta", required=True, help="Chemin vers le fichier de comparaison dose Gupta et XieZaidi")
+parser.add_argument("--ainit", type=float, required=True, help="Activité initiale injectée (MBq)")
+parser.add_argument("--tphys", type=float, required=True, help="Temps physique du radionucléide (min)")
 
+args = parser.parse_args()
+
+Ainit = args.ainit
+Tphys = args.tphys
+
+# === CHARGEMENT DES DONNÉES ===
+DonneesGupta = pd.read_csv(args.data, index_col=0) #sheet_name = "Feuille1", index_col=0)
+#autredonnees= pd.read_xlsx(args.data, sheet_name = "Feuille2", index_col=0)
+S_value_XieZaidi_annexe = pd.read_csv(args.sval_annexe, index_col=0)
+S_valueFigure5XieZaidi = pd.read_csv(args.sval_fig5, index_col=0)
+DoseAbsorbee_SelfCross_Gupta = pd.read_csv(args.dose_cross, index_col=0)
+DoseAbsorbee_GuptaETXieZaidi = pd.read_csv(args.dose_gupta, index_col=0)
+
+#Tphys = autredonnees.loc[0, 'Tphys']
+#Ainit = autredonnees.loc[0, 'Ainit']
 
 organes = DonneesGupta.columns[6:16]
 
-S_valueFigure5XieZaidi = pd.DataFrame({
-    'valeur': [
-        1.27E-01,  # Coeur
-        4.56E-01,  # Bladder
-        2.51E-01,  # Spleen
-        1.84E-02,  # Foie
-        1.72E-01,  # Lungs
-        6.54E-02,  # Cerveau
-        7.99E-02,  # Estomac
-        9.45E-02   # Rein
-    ]
-}, 
-index=ordre)
-#print(S_valueFigure5XieZaidi)
-S_valueFigure5XieZaidi.index.name = 'organe'
+
+S_valueFigure5XieZaidi=S_valueFigure5XieZaidi['Valeur'].to_numpy()
 
 
 temps = DonneesGupta['Délais'].to_numpy()
@@ -54,14 +64,15 @@ ActInt_corr=ActInt_corr*60
 
 #print(organes)
 DSelfAbsDose_annexe, DSelfAbsDose_figure5, SelfS_Value_XieZaidi_annexe = CalculDoseSelf(ActInt_corr, ActExt_corr, organes , S_value_XieZaidi_annexe, S_valueFigure5XieZaidi)
+#print("après fin?")
 DSelfAbsDose_annexe=DSelfAbsDose_annexe/Ainit
 DSelfAbsDose_figure5=DSelfAbsDose_figure5/Ainit
-#print("DSelfAbsDose: ", DSelfAbsDose, "DSelfAbsDose_figure5: ", DSelfAbsDose_figure5)
+#print("DSelfAbsDose: ", DSelfAbsDose_annexe, "DSelfAbsDose_figure5: ", DSelfAbsDose_figure5)
 
 Comparaison = comparaison_DoseAbsSelf_Biomaps_Gupta(organes, ActInt_corr, ActExt_corr, S_valueFigure5XieZaidi, Ainit, DSelfAbsDose_figure5, DSelfAbsDose_annexe, SelfS_Value_XieZaidi_annexe, DoseAbsorbee_SelfCross_Gupta, DoseAbsorbee_GuptaETXieZaidi)
-#print(Comparaison)
+print(Comparaison)
+#Comparaison.to_excel("/home/verot/Projet/Sorties/comparaisons.xlsx")
 
-#print(ActInt_corr)
 
-plotActivite(temps, y_corr_matrice, PartieExtrapolee, organes)
+#plotActivite(temps, y_corr_matrice, PartieExtrapolee, organes)
 #barplotComparaison(DSelfAbsDose_annexe, DSelfAbsDose_figure5, 'titre', organes)
