@@ -26,10 +26,10 @@ import argparse
 parser = argparse.ArgumentParser(description="Pipeline dosimétrie personnalisée")
 
 parser.add_argument("--data", required=True, help="Chemin vers le fichier .csv des données principales (DonneesGupta)")
-parser.add_argument("--sval_annexe", required=True, help="Chemin vers le fichier des S-values (annexe)")
+#parser.add_argument("--sval_annexe", required=True, help="Chemin vers le fichier des S-values (annexe)")
 parser.add_argument("--sval_fig5", required=True, help="Chemin vers les S-values de la figure 5")
-parser.add_argument("--dose_cross", required=True, help="Chemin vers le fichier des doses absorbées (self+cross, Gupta)")
-parser.add_argument("--dose_gupta", required=True, help="Chemin vers le fichier de comparaison dose Gupta et XieZaidi")
+#parser.add_argument("--dose_cross", required=True, help="Chemin vers le fichier des doses absorbées (self+cross, Gupta)")
+#parser.add_argument("--dose_gupta", required=True, help="Chemin vers le fichier de comparaison dose Gupta et XieZaidi")
 parser.add_argument("--ainit", type=float, required=True, help="Activité initiale injectée (MBq)")
 parser.add_argument("--tphys", type=float, required=True, help="Temps physique du radionucléide (min)")
 
@@ -41,18 +41,18 @@ Tphys = args.tphys
 # === CHARGEMENT DES DONNÉES ===
 DonneesGupta = pd.read_csv(args.data, index_col=0) #sheet_name = "Feuille1", index_col=0)
 #autredonnees= pd.read_xlsx(args.data, sheet_name = "Feuille2", index_col=0)
-S_value_XieZaidi_annexe = pd.read_csv(args.sval_annexe, index_col=0)
+#S_value_XieZaidi_annexe = pd.read_csv(args.sval_annexe, index_col=0)
 S_valueFigure5XieZaidi = pd.read_csv(args.sval_fig5, index_col=0)
-DoseAbsorbee_SelfCross_Gupta = pd.read_csv(args.dose_cross, index_col=0)
-DoseAbsorbee_GuptaETXieZaidi = pd.read_csv(args.dose_gupta, index_col=0)
+#DoseAbsorbee_SelfCross_Gupta = pd.read_csv(args.dose_cross, index_col=0)
+#DoseAbsorbee_GuptaETXieZaidi = pd.read_csv(args.dose_gupta, index_col=0)
 
 #Tphys = autredonnees.loc[0, 'Tphys']
 #Ainit = autredonnees.loc[0, 'Ainit']
 
 organes = DonneesGupta.columns[6:16]
+print(organes, DonneesGupta)
 
 
-S_valueFigure5XieZaidi=S_valueFigure5XieZaidi['Valeur'].to_numpy()
 
 
 temps = DonneesGupta['Délais'].to_numpy()
@@ -62,15 +62,21 @@ ActInt_corr, ActExt_corr, PartieExtrapolee, y_corr_matrice=TAC(DonneesGupta, tem
 ActExt_corr=ActExt_corr*60
 ActInt_corr=ActInt_corr*60
 
+#print(ActExt_corr, ActInt_corr)
 #print(organes)
-DSelfAbsDose_annexe, DSelfAbsDose_figure5, SelfS_Value_XieZaidi_annexe = CalculDoseSelf(ActInt_corr, ActExt_corr, organes , S_value_XieZaidi_annexe, S_valueFigure5XieZaidi)
+DSelfAbsDose_annexe, DSelfAbsDose_figure5, SelfS_Value_XieZaidi_annexe, distribDose_parOrgane, DAbsTotale = CalculDoseSelf(ActInt_corr, ActExt_corr, organes, S_valueFigure5XieZaidi)#  S_value_XieZaidi_annexe, S_valueFigure5XieZaidi)
 #print("après fin?")
+#print(DSelfAbsDose_figure5)
+
+
+
 DSelfAbsDose_annexe=DSelfAbsDose_annexe/Ainit
 DSelfAbsDose_figure5=DSelfAbsDose_figure5/Ainit
 #print("DSelfAbsDose: ", DSelfAbsDose_annexe, "DSelfAbsDose_figure5: ", DSelfAbsDose_figure5)
 
-Comparaison = comparaison_DoseAbsSelf_Biomaps_Gupta(organes, ActInt_corr, ActExt_corr, S_valueFigure5XieZaidi, Ainit, DSelfAbsDose_figure5, DSelfAbsDose_annexe, SelfS_Value_XieZaidi_annexe, DoseAbsorbee_SelfCross_Gupta, DoseAbsorbee_GuptaETXieZaidi)
-print(Comparaison)
+
+#Comparaison = comparaison_DoseAbsSelf_Biomaps_Gupta(organes, ActInt_corr, ActExt_corr, S_valueFigure5XieZaidi, Ainit, DSelfAbsDose_figure5, DSelfAbsDose_annexe, SelfS_Value_XieZaidi_annexe, DoseAbsorbee_SelfCross_Gupta, DoseAbsorbee_GuptaETXieZaidi)
+#print(Comparaison)
 #Comparaison.to_excel("/home/verot/Projet/Sorties/comparaisons.xlsx")
 
 
