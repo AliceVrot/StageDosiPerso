@@ -44,3 +44,10 @@ verot@BIOST017:~/Projet/Scripts$ python Main.py \
 --sval_fig5 /home/verot/Projet/DonneesGupta/S_valueFigure5XieZaidi.csv \
 --ainit 15.22 \
 --tphys 109.771
+
+python Main.py --data /home/verot/Projet/DonneesGupta/Donnes_Gupta_Arrange1.csv --sval_fig5 /home/verot/Projet/DonneesGupta/S_values_XieZaidi1.csv --ainit 15.22 --tphys 109.771 --SortieActivite 1 --SortieDose 2
+
+python Main.py --data /home/verot/Projet/DonneesGupta/Donnes_Gupta_Arrange1.csv --sval_fig5 /home/verot/Projet/DonneesGupta/S_values_XieZaidi1.csv --ainit 15.22 --tphys 109.771 --SortieActivite 1 --SortieDose 2 --EnregistrerSortieDose /home/verot/Projet/Sorties/recapitulatif.csv
+
+--enregistrerSortieDose: entrée possibles: nom du fichier de sortie désiré : les résultats seront enregistrés sous ce fichier; 1 : le fichier sera enregistré sous le nom du fichier d'entré + _résultat
+
