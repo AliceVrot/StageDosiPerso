@@ -1,4 +1,9 @@
+import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import argparse
+from plot import plotActivite, barplotComparaison
+
 def comparaison_DoseAbsSelf_Biomaps_Gupta(organes, ActInt_corr, ActExt_corr, S_valueFigure5XieZaidi, Ainit, DSelfAbsDose_figure5, DSelfAbsDose_annexe, SelfS_Value, D_abs, XieZaidi):
     Comparaison = pd.DataFrame({
         'Organes': organes,
@@ -20,3 +25,12 @@ def comparaison_DoseAbsSelf_Biomaps_Gupta(organes, ActInt_corr, ActExt_corr, S_v
         'Différence (%)': abs(XieZaidi['Xie and Zaidi'] - D_abs['Total absorbed dose'])/ D_abs['Total absorbed dose'] * 100
     })
     return (Comparaison)
+
+
+#parser = argparse.ArgumentParser(description="Définition des sorties")
+#parser.add_argument("--data1", required=True, help="Chemin vers le fichier .csv des données principales (DonneesEntre)")
+#parser.add_argument("--data2", required=True, help="Chemin vers le fichier .csv des données principales (DonneesEntre)")
+#args = parser.parse_args()
+
+#DonneesEntre = pd.read_csv(args.data, index_col=0)
+#temps = DonneesEntre['Délais'].to_numpy()

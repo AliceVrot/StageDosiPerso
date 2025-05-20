@@ -27,13 +27,13 @@ parser = argparse.ArgumentParser(description="Pipeline dosimétrie personnalisé
 
 parser.add_argument("--data", required=True, help="Chemin vers le fichier .csv des données principales (DonneesEntre)")
 #parser.add_argument("--sval_annexe", required=True, help="Chemin vers le fichier des S-values (annexe)")
-parser.add_argument("--sval_fig5", required=True, help="Chemin vers les S-values de la figure 5")
+parser.add_argument("--S_val", required=True, help="Chemin vers les S-values")
 #parser.add_argument("--dose_cross", required=True, help="Chemin vers le fichier des doses absorbées (self+cross, Gupta)")
 #parser.add_argument("--dose_gupta", required=True, help="Chemin vers le fichier de comparaison dose Gupta et XieZaidi")
 parser.add_argument("--ainit", type=float, required=True, help="Activité initiale injectée (MBq)")
 parser.add_argument("--tphys", type=float, required=True, help="Temps physique du radionucléide (min)")
 parser.add_argument("--SortieActivite", type=float, required=True, help="1 (Oui) ou 0 (Non) pour la sortie de l'activité")
-parser.add_argument("--SortieDose", type=float, required=True, help="0(non), 1(dose par organe), 2 (matrice dose absorbée par les organes cible par organe source) pour la sortie de la dose absorbée")
+#parser.add_argument("--SortieDose", type=float, required=True, help="0(non), 1(dose par organe), 2 (matrice dose absorbée par les organes cible par organe source) pour la sortie de la dose absorbée")
 parser.add_argument("--EnregistrerSortieDose", type=str, required=True, help="0 ou 1 Ou nom du fichier de sortie")
 
 args = parser.parse_args()
@@ -45,7 +45,7 @@ Tphys = args.tphys
 DonneesEntre = pd.read_csv(args.data, index_col=0) #sheet_name = "Feuille1", index_col=0)
 #autredonnees= pd.read_xlsx(args.data, sheet_name = "Feuille2", index_col=0)
 #S_value_XieZaidi_annexe = pd.read_csv(args.sval_annexe, index_col=0)
-S_value = pd.read_csv(args.sval_fig5, index_col=0)
+S_value = pd.read_csv(args.S_val, index_col=0)
 #DoseAbsorbee_SelfCross_Gupta = pd.read_csv(args.dose_cross, index_col=0)
 #DoseAbsorbee_GuptaETXieZaidi = pd.read_csv(args.dose_gupta, index_col=0)
 
@@ -93,28 +93,23 @@ Resultats = pd.DataFrame({
         'Activité Extrapolée Corrigée (MBq.sec)': ActExt_corr,
         'Activité Accumulée Totale (MBq.sec)': (ActInt_corr + ActExt_corr),
         #'Self Absorbed S-Value': S_value,
-        'Dose Absorbée': DAbsTotale,
+        'Dose Absorbée (mGy.MBq⁻¹)': DAbsTotale,
     })
 
-
+print (Resultats)
 # === SORTIES ===
 if args.SortieActivite == 1:
     #print('Activite interpolée: ', ActInt_corr, ' Activité extrapolée', ActExt_corr)
     a=1
 
-if args.SortieDose == 1:
-    #print('Dose absorbée self (mGy.MBq⁻¹) Alice: ', DSelfAbsDose)
-    if args.EnregistrerSortieDose == 1:
-        DSelfAbsDose.to_csv("/home/verot/Projet/Sorties/DSelfAbsDose.csv")
-    #DSelfAbsDose.to_excel("/home/verot/Projet/Sorties/NOM.xlsx")
-if args.SortieDose == 2:
-    #print(distribDose_parOrgane)
-    if args.EnregistrerSortieDose == "1":
-        output_file = args.data.replace(".csv", "_resultats.csv")
-        Resultats.to_csv(output_file,header=True, index=True)
 
-    if args.EnregistrerSortieDose.endswith(".csv"):
-        output_file = args.EnregistrerSortieDose
-        Resultats.to_csv(output_file,header=True, index=True)
+#print(distribDose_parOrgane)
+if args.EnregistrerSortieDose == "1":
+    output_file = args.data.replace(".csv", "_resultats.csv")
+    Resultats.to_csv(output_file,header=True, index=True)
+
+if args.EnregistrerSortieDose.endswith(".csv"):
+    output_file = args.EnregistrerSortieDose
+    Resultats.to_csv(output_file,header=True, index=True)
 
     #distribDose_parOrgane.to_excel("/home/verot/Projet/Sorties/NOM.xlsx")
