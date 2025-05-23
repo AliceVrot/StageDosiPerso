@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import opengate as gate
 from opengate.sources.utility import __get_rad_beta_spectrum
+from opengate.sources.utility import get_rad_yield
 import pathlib
 import pyvista
 import SimpleITK as sitk
@@ -20,11 +21,13 @@ output_path = current_path / "outputMobyF18"
 output_file = output_path / "dose.mhd"
 
 
-def simulation(n: int, visu=True):
+def simulation(visu=True):
 	# units
 	m = gate.g4_units.m
 	mm = gate.g4_units.mm
 	um = gate.g4_units.um
+	Bq = gate.g4_units.Bq
+	sec = gate.g4_units.s
 
 	# create the simulation
 	sim = gate.Simulation()
@@ -36,8 +39,8 @@ def simulation(n: int, visu=True):
 	ui.g4_verbose = False
 	ui.g4_verbose_level = 1
 	ui.visu = visu
-	ui.visu_type = "vrml_file_only"
-	ui.visu_filename = str(output_path / f"visu_{n}.wrl")
+	#ui.visu_type = "vrml_file_only"
+	#ui.visu_filename = str(output_path / f"visu_{n}.wrl")
 	ui.random_seed = "auto"
 	ui.number_of_threads = 1
 
@@ -72,10 +75,23 @@ def simulation(n: int, visu=True):
 	source = sim.add_source("VoxelSource", "source")
 	source.attached_to = moby_ct.name
 	# source.particle = "ion 71 177"
+	#source.particle = "e+"
+	#source.image = str(current_path / "F_LR_30g_act_1_brain.mhd")
+	source.image = str("F_LR_30g_act_1_brain.mhd")
+	activity = 144 * 1e6 * Bq / ui.number_of_threads
 	source.particle = "e+"
-	source.image = str(current_path / "F_LR_30g_act_1_brain.mhd")
-	source.direction.type = "iso"
 	source.energy.type = "F18"
+	source.direction.type = "iso"
+	source.half_life = 6586.26 * sec
+	total_yield = get_rad_yield("F18")
+	print(f"{total_yield=}")
+	source.activity = activity * total_yield
+
+	print("Yield for F18 (nb of e+ per decay) : ", total_yield)
+
+
+	#source.direction.type = "iso"
+	#source.energy.type = "F18"
 	#set_source_energy_spectrum(source, "Lu177")  # After defining the particle!!
 	#source.energy.spectrum_histogram_interpolation = interpolation
 	#source.energy.type = "spectrum_histogram"
@@ -83,9 +99,11 @@ def simulation(n: int, visu=True):
 	#source.energy.spectrum_weights = spectrum.weights
 	# compute the translation to align the source with CT
 	# (considering they are in the same physical space)
+
+	
 	source.position.translation = gate.image.get_translation_between_images_center(moby_ct.image, source.image)
 	source_info = gate.image.read_image_info(source.image)
-	source.n = n / ui.number_of_threads
+	#source.n = n / ui.number_of_threads
 
 	print(f"Source image origin and size: {source_info.origin}, {source_info.size}, {source_info.spacing}")
 
@@ -149,10 +167,10 @@ def visualisation(n: int):
 
 
 def main():
-	n = 1e6
+	#n = 1e6
 	enable_visu = False
 
-	simulation(n, visu=enable_visu)
+	simulation(visu=enable_visu)
 
 	#analysis()
 
