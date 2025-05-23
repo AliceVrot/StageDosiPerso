@@ -90,7 +90,7 @@ def simulation(visu=True):
 	# (considering they are in the same physical space)
 	source.position.translation = gate.image.get_translation_between_images_center(moby_ct.image, source.image)
 	source_info = gate.image.read_image_info(source.image)
-	activity =  230 * 1e6 * Bq / ui.number_of_threads
+	activity =  178 * 1e6 * Bq / ui.number_of_threads
 	total_yield = get_rad_yield("F18")
 	print(f"{total_yield=}")
 	source.activity = activity * total_yield
