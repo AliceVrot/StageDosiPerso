@@ -38,11 +38,11 @@ def simulation(visu=True):
 	ui = sim.user_info
 	ui.g4_verbose = False
 	ui.g4_verbose_level = 1
-	ui.visu = visu
+	#ui.visu = visu
 	#ui.visu_type = "vrml_file_only"
 	#ui.visu_filename = str(output_path / f"visu_{n}.wrl")
 	ui.random_seed = "auto"
-	ui.number_of_threads = 1
+	ui.number_of_threads = 6
 
 	# materials
 	sim.volume_manager.add_material_database("/volatile/Gate10dev/opengate/opengate/tests/data/GateMaterials.db")
@@ -75,23 +75,12 @@ def simulation(visu=True):
 	source = sim.add_source("VoxelSource", "source")
 	source.attached_to = moby_ct.name
 	# source.particle = "ion 71 177"
-	#source.particle = "e+"
+	source.particle = "e+"
 	#source.image = str(current_path / "F_LR_30g_act_1_brain.mhd")
 	source.image = str("F_LR_30g_act_1_brain.mhd")
-	activity = 144 * 1e6 * Bq / ui.number_of_threads
-	source.particle = "e+"
-	source.energy.type = "F18"
+
 	source.direction.type = "iso"
-	source.half_life = 6586.26 * sec
-	total_yield = get_rad_yield("F18")
-	print(f"{total_yield=}")
-	source.activity = activity * total_yield
-
-	print("Yield for F18 (nb of e+ per decay) : ", total_yield)
-
-
-	#source.direction.type = "iso"
-	#source.energy.type = "F18"
+	source.energy.type = "F18"
 	#set_source_energy_spectrum(source, "Lu177")  # After defining the particle!!
 	#source.energy.spectrum_histogram_interpolation = interpolation
 	#source.energy.type = "spectrum_histogram"
@@ -99,11 +88,17 @@ def simulation(visu=True):
 	#source.energy.spectrum_weights = spectrum.weights
 	# compute the translation to align the source with CT
 	# (considering they are in the same physical space)
-
-	
 	source.position.translation = gate.image.get_translation_between_images_center(moby_ct.image, source.image)
 	source_info = gate.image.read_image_info(source.image)
+	activity =  230 * 1e6 * Bq / ui.number_of_threads
+	total_yield = get_rad_yield("F18")
+	print(f"{total_yield=}")
+	source.activity = activity * total_yield
 	#source.n = n / ui.number_of_threads
+
+	total_yield = get_rad_yield("F18")
+	print(f"{total_yield=}")
+	print("Yield for F18 (nb of e+ per decay) : ", total_yield)
 
 	print(f"Source image origin and size: {source_info.origin}, {source_info.size}, {source_info.spacing}")
 
@@ -156,18 +151,18 @@ def load(mhd: str):
 #	plt.show()
 
 
-def visualisation(n: int):
-	pl = pyvista.Plotter()
-	pl.import_vrml(str(output_path / f"visu_{n}.wrl"))
-	pl.add_axes(line_width=5, color="white")
-	pl.background_color = "black"
-	for actor in pl.renderer.GetActors():
-		actor.GetProperty().SetOpacity(.7)
-	pl.show()
+#def visualisation(n: int):
+#	pl = pyvista.Plotter()
+#	pl.import_vrml(str(output_path / f"visu_{n}.wrl"))
+#	pl.add_axes(line_width=5, color="white")
+#	pl.background_color = "black"
+#	for actor in pl.renderer.GetActors():
+#		actor.GetProperty().SetOpacity(.7)
+#	pl.show()
 
 
 def main():
-	#n = 1e6
+	#n = 139
 	enable_visu = False
 
 	simulation(visu=enable_visu)
