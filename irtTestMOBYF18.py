@@ -51,7 +51,7 @@ def simulation(n: int, visu=True):
 	# patient CT
 	moby_ct = sim.add_volume("Image", "moby_ct")
 	moby_ct.image = str(current_path / "F_LR_30g_atn_1_water.mhd")
-	moby_ct.voxel_materials = [[2.9, 3.1, "Water"], [-1000, 2.8, "Air"]]
+	moby_ct.voxel_materials = [[1, 1, "Water"], [0, 0, "Air"]]
 	moby_ct.translation = [0 * mm, 0 * mm, 0 * mm]
 
 	moby_ct_info = gate.image.read_image_info(moby_ct.image)
@@ -149,7 +149,7 @@ def visualisation(n: int):
 
 
 def main():
-	n = 1000
+	n = 1e6
 	enable_visu = False
 
 	simulation(n, visu=enable_visu)
