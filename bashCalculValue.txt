@@ -1,0 +1,4 @@
+
+#exemple appel pour CalculSValue
+
+python3 CalculSValue.py   --ct /home/verot/Projet/MOBY/F_LR_30g_atn_1.mhd   --act /home/verot/Projet/MOBY/F_LR_30g_act_1.mhd   --edep /home/verot/Projet/MOBY/outputMobyF18/dose_edep6h.mhd   --n 42606544   --densities 0 0 0 1.04 1.06 0.3 1.05 1.04 1.06 1.05 1.04
