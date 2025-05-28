@@ -5,6 +5,7 @@ import pathlib
 import pyvista
 import SimpleITK as sitk
 import argparse
+import pandas as pd
 
 nbpartiules = 42606544 
 
@@ -62,7 +63,27 @@ def caluclmass(act, ct, edep, nbpartiules, densite):
     #S_valuesGy = S_values * 1.6 * 1e-16 * 1e3 #en Gy
     S_valuesmGy_MBqs = S_values * (1e6 * 1e3) #en mGy/MBq
     #print("S_values", S_valuesmGy_MBqs)
-    return mass, energies, volume, edeptot, S_valuesmGy_MBqs
+
+
+    results = []
+
+    for i in range(len(unique_labels)):
+        if unique_labels[i] in organes_labels:
+            #print(f"Label {unique_labels[i]} ({organes_labels[unique_labels[i]]}): {mass[i]:.2f} g, Energy: {energies[i]:.2f} MeV, S-value: {S_valuesmGy_MBqs[i]:.2f} mGy/MBq.s")
+        
+            results.append({
+                'Organe': organes_labels[unique_labels[i]],
+                'Label': unique_labels[i],
+                'Masse (g)': f"{mass[i]:.2f}",
+                'Énergie déposée (MeV)': f"{energies[i]:.2f}",
+                'S-value (mGy/MBq.s)': f"{S_valuesmGy_MBqs[i]}"
+            })
+    df_svalues = pd.DataFrame(results)
+    print(df_svalues)
+        #else:
+        #    print(f"Label {unique_labels[i]}: {mass[i]:.2f} g, Energy: {energies[i]:.2f} MeV, S-value: {S_valuesmGy_MBqs[i]:.2f} mGy/MBq.s")
+
+    return mass, energies, volume, edeptot, S_valuesmGy_MBqs, df_svalues
 
 
 #densite = np.array([0, 0, 0, 1.04, 1.06, 0.3, 1.05, 1.04, 1.06, 1.05, 1.04])  # Densité en g/cm³ A CHANGER!!!
@@ -79,6 +100,10 @@ def caluclmass(act, ct, edep, nbpartiules, densite):
 #print(S_values)
 
 
+
+
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Calcul S-values (version simple)")
     parser.add_argument("--ct", required=True, help="Fichier .mhd du CT")
@@ -89,5 +114,16 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    mass, energies, volume, edeptot, S_values = caluclmass(args.act, args.ct, args.edep, args.n, np.array(args.densities))
-    print("S-values (mGy/MBq.s) :", S_values)
+    mass, energies, volume, edeptot, S_values, df_svalues = caluclmass(args.act, args.ct, args.edep, args.n, np.array(args.densities))
+    
+    reponse = input("Voulez-vous enregistrer les résultats dans un fichier CSV ? (y/n): ")
+    if reponse.lower() in ["y", "yes", "o", "oui"]:
+        fichier = input("Entrez le nom du fichier CSV (par défaut 'svalues_results.csv'): ")
+        if not fichier:
+            df_svalues.to_csv("svalues_results.csv", index=False)
+        else:
+            df_svalues.to_csv(fichier, index=False)
+        #df_svalues.to_csv("svalues_results.csv", index=False)
+        print("Résultats enregistrés dans 'svalues_results.csv'.")
+
+    #print("S-values (mGy/MBq.s) :", S_values)
