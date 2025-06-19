@@ -170,7 +170,7 @@ typing_utils @ file:///home/conda/feedstock_root/build_artifacts/typing_utils_17
 tzdata==2025.2
 uproot==5.6.0
 uri-template @ file:///home/conda/feedstock_root/build_artifacts/uri-template_1733323593477/work/dist
-urllib3==2.4.0
+urllib3==2.5.0
 vtk==9.3.1
 wcwidth @ file:///home/conda/feedstock_root/build_artifacts/wcwidth_1733231326287/work
 webcolors @ file:///home/conda/feedstock_root/build_artifacts/webcolors_1733359735138/work
