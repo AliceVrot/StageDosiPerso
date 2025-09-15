@@ -148,7 +148,7 @@ rpds-py @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_rp
 scipy==1.15.2
 scooby==0.10.0
 Send2Trash @ file:///home/conda/feedstock_root/build_artifacts/send2trash_1733322040660/work
-setuptools==75.8.0
+setuptools==78.1.1
 SimpleITK==2.4.1
 six==1.17.0
 smmap==5.0.2
