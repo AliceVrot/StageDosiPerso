@@ -35,7 +35,7 @@ et_xmlfile==2.0.0
 exceptiongroup @ file:///home/conda/feedstock_root/build_artifacts/exceptiongroup_1733208806608/work
 executing @ file:///home/conda/feedstock_root/build_artifacts/executing_1733569351617/work
 fastjsonschema @ file:///home/conda/feedstock_root/build_artifacts/python-fastjsonschema_1733235979760/work/dist
-fonttools==4.57.0
+fonttools==4.61.0
 fqdn @ file:///home/conda/feedstock_root/build_artifacts/fqdn_1733327382592/work/dist
 frozenlist @ file:///home/conda/feedstock_root/build_artifacts/frozenlist_1746635328256/work
 fsspec==2025.3.2
