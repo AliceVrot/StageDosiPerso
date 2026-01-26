@@ -177,7 +177,7 @@ webcolors @ file:///home/conda/feedstock_root/build_artifacts/webcolors_17333597
 webencodings @ file:///home/conda/feedstock_root/build_artifacts/webencodings_1733236011802/work
 websocket-client @ file:///home/conda/feedstock_root/build_artifacts/websocket-client_1733157342724/work
 wget==3.2
-wheel==0.45.1
+wheel==0.46.2
 wslink @ file:///home/conda/feedstock_root/build_artifacts/wslink_1742768409749/work
 xrootd @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_xrootd_1744724860/work/build-dir/bindings/python
 xxhash==3.5.0
